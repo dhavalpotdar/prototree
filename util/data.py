@@ -53,7 +53,13 @@ def get_dataloaders(args: argparse.Namespace):
     trainset, projectset, testset, classes, shape = get_data(args)
     c, w, h = shape
     # Determine if GPU should be used
-    cuda = not args.disable_cuda and torch.backends.mps.is_available()
+    
+    # Uncomment for CUDA
+    cuda = not args.disable_cuda and torch.cuda.is_available()
+
+    # Uncomment for MPS
+    # cuda = not args.disable_cuda and torch.backends.mps.is_available()
+    
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=args.batch_size, shuffle=True, pin_memory=cuda
     )

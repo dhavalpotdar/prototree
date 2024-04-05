@@ -91,6 +91,7 @@ def get_args() -> argparse.Namespace:
         "--disable_cuda",
         action="store_true",
         help="Flag that disables GPU usage if set",
+        default=False
     )
     parser.add_argument(
         "--log_dir",

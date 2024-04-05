@@ -34,12 +34,19 @@ def run_tree(args=None):
     )
     # Log the run arguments
     save_args(args, log.metadata_dir)
-    if not args.disable_cuda and torch.backends.mps.is_available():
+
+    # uncomment for MPS
+    # if not args.disable_cuda and torch.backends.mps.is_available():
+    #     device = torch.device("mps")
+    # else:
+    #     device = torch.device("cpu")
+
+    # uncomment for CUDA
+    if not args.disable_cuda and torch.cuda.is_available():
         # device = torch.device('cuda')
-        # device = torch.device('cuda:{}'.format(torch.cuda.current_device()))
-        device = torch.device("mps")
+        device = torch.device('cuda:{}'.format(torch.cuda.current_device()))
     else:
-        device = torch.device("cpu")
+        device = torch.device('cpu')
 
     # Log which device was actually used
     log.log_message("Device used: " + str(device))
