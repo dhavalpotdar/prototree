@@ -24,13 +24,13 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--net",
         type=str,
-        default="resnet50_inat",
+        default="resnet50",
         help="Base network used in the tree. Pretrained network on iNaturalist is only available for resnet50_inat (default). Others are pretrained on ImageNet. Options are: resnet18, resnet34, resnet50, resnet50_inat, resnet101, resnet152, densenet121, densenet169, densenet201, densenet161, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn or vgg19_bn",
     )
     parser.add_argument(
         "--batch_size",
         type=int,
-        default=256,
+        default=512,
         help="Batch size when training the model using minibatch gradient descent",
     )
     parser.add_argument(
@@ -42,7 +42,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--epochs",
         type=int,
-        default=1,
+        default=2,
         help="The number of epochs the tree should be trained",
     )
     parser.add_argument(
