@@ -30,13 +30,13 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--batch_size",
         type=int,
-        default=512,
+        default=64,
         help="Batch size when training the model using minibatch gradient descent",
     )
     parser.add_argument(
         "--depth",
         type=int,
-        default=9,
+        default=5,
         help="The tree is initialized as a complete tree of this depth",
     )
     parser.add_argument(
@@ -114,7 +114,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--num_features",
         type=int,
-        default=256,
+        default=64,
         help="Depth of the prototype and therefore also depth of convolutional output",
     )
     parser.add_argument(

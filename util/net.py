@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from prototree.prototree import ProtoTree
 from util.log import Log
 from features.resnet_features import resnet18_features, resnet34_features, resnet50_features, resnet50_features_inat, resnet101_features, resnet152_features
-from features.densenet_features import densenet121_features, densenet161_features, densenet169_features, densenet201_features
+from features.densenet_features import densenet121_features, densenet161_features, densenet169_features, densenet201_features, densenet121_nih_features
 from features.vgg_features import vgg11_features, vgg11_bn_features, vgg13_features, vgg13_bn_features, vgg16_features, vgg16_bn_features,vgg19_features, vgg19_bn_features
 
 base_architecture_to_features = {'resnet18': resnet18_features,
@@ -24,7 +24,8 @@ base_architecture_to_features = {'resnet18': resnet18_features,
                                  'vgg16': vgg16_features,
                                  'vgg16_bn': vgg16_bn_features,
                                  'vgg19': vgg19_features,
-                                 'vgg19_bn': vgg19_bn_features}
+                                 'vgg19_bn': vgg19_bn_features,
+                                 'densenet121-nih': densenet121_nih_features}
 
 """
     Create network with pretrained features and 1x1 convolutional layer

@@ -275,4 +275,5 @@ def run_tree(args=None):
 
 if __name__ == "__main__":
     args = get_args()
+    torch.cuda.empty_cache()
     run_tree(args)

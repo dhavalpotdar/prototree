@@ -8,6 +8,7 @@ from collections import OrderedDict
 
 model_urls = {
     'densenet121': 'https://download.pytorch.org/models/densenet121-a639ec97.pth',
+    'densenet121-nih': 'https://github.com/mlmed/torchxrayvision/releases/download/v1/nih-densenet121-d121-tw-lr001-rot45-tr15-sc15-seed0-best.pt',
     'densenet169': 'https://download.pytorch.org/models/densenet169-b2777c0a.pth',
     'densenet201': 'https://download.pytorch.org/models/densenet201-c1103571.pth',
     'densenet161': 'https://download.pytorch.org/models/densenet161-8d451a50.pth',
@@ -110,7 +111,7 @@ class DenseNet_features(nn.Module):
 
         # First convolution
         self.features = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(in_channels=3, out_channels=num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
+            ('conv0', nn.Conv2d(in_channels=1, out_channels=num_init_features, kernel_size=7, stride=2, padding=3, bias=False)),
             ('norm0', nn.BatchNorm2d(num_init_features)),
             ('relu0', nn.ReLU(inplace=True)),
             ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
@@ -192,6 +193,42 @@ def densenet121_features(pretrained=False, **kwargs):
         pattern = re.compile(
             r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
         state_dict = model_zoo.load_url(model_urls['densenet121'], model_dir=model_dir)
+        for key in list(state_dict.keys()):
+            '''
+            example
+            key 'features.denseblock4.denselayer24.norm.2.running_var'
+            res.group(1) 'features.denseblock4.denselayer24.norm'
+            res.group(2) '2.running_var'
+            new_key 'features.denseblock4.denselayer24.norm2.running_var'
+            '''
+            res = pattern.match(key)
+            if res:
+                new_key = res.group(1) + res.group(2)
+                state_dict[new_key] = state_dict[key]
+                del state_dict[key]
+
+        del state_dict['classifier.weight']
+        del state_dict['classifier.bias']
+        model.load_state_dict(state_dict)
+    return model
+
+def densenet121_nih_features(pretrained=False, **kwargs):
+    r"""Densenet-121 model from
+    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    """
+    model = DenseNet_features(num_init_features=64, growth_rate=32, block_config=(6, 12, 24, 16),
+                     **kwargs)
+    if pretrained:
+        # '.'s are no longer allowed in module names, but pervious _DenseLayer
+        # has keys 'norm.1', 'relu.1', 'conv.1', 'norm.2', 'relu.2', 'conv.2'.
+        # They are also in the checkpoints in model_urls. This pattern is used
+        # to find such keys.
+        pattern = re.compile(
+            r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
+        state_dict = model_zoo.load_url(model_urls['densenet121-nih'], model_dir=model_dir).state_dict()
         for key in list(state_dict.keys()):
             '''
             example

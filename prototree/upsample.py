@@ -50,8 +50,8 @@ def upsample(tree: ProtoTree, project_info: dict, project_loader: DataLoader, fo
                 heatmap = np.float32(heatmap) / 255
                 heatmap = heatmap[...,::-1]
                 
-                # overlayed_original_img = 0.5 * x_np + 0.2 * heatmap
-                # plt.imsave(fname=os.path.join(dir,'%s_heatmap_original_image.png'%str(decision_node_idx)), arr=overlayed_original_img, vmin=0.0,vmax=1.0)
+                overlayed_original_img = 0.5 * x_np + 0.2 * heatmap
+                plt.imsave(fname=os.path.join(dir,'%s_heatmap_original_image.png'%str(decision_node_idx)), arr=overlayed_original_img, vmin=0.0,vmax=1.0)
 
                 # save the highly activated patch
                 masked_similarity_map = np.zeros(similarity_map.shape)
