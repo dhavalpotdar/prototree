@@ -21,7 +21,7 @@ def get_local_expl_args() -> argparse.Namespace:
                         help='The directory in which results should be logged. Should be same log_dir as loaded ProtoTree')
     parser.add_argument('--dataset',
                         type=str,
-                        default='CUB-200-2011',
+                        default='NIH',
                         help='Data set on which the ProtoTree was trained')
     parser.add_argument('--sample_dir',
                         type=str,
@@ -63,16 +63,27 @@ def explain_local(args):
     args.batch_size=64 #placeholder
     args.augment = True #placeholder
     _, _, _, classes, _ = get_dataloaders(args)
+    # mean = (0.485, 0.456, 0.406)
+    # std = (0.229, 0.224, 0.225)
+    # normalize = transforms.Normalize(mean=mean,std=std)
+    # test_transform = transform_no_augment = transforms.Compose([
+    #                     transforms.Resize(size=(args.image_size, args.image_size)),
+    #                     transforms.ToTensor(),
+    #                     normalize
+    #                 ])
+    
+    shape = (3, args.image_size, args.image_size)
     mean = (0.485, 0.456, 0.406)
     std = (0.229, 0.224, 0.225)
-    normalize = transforms.Normalize(mean=mean,std=std)
-    test_transform = transform_no_augment = transforms.Compose([
-                        transforms.Resize(size=(args.image_size, args.image_size)),
-                        transforms.ToTensor(),
-                        normalize
-                    ])
-    
-    sample = test_transform(Image.open(args.sample_dir)).unsqueeze(0).to(device)
+    normalize = transforms.Normalize(mean=mean, std=std)
+    transform_no_augment = transforms.Compose([
+        transforms.Resize(size=(args.image_size, args.image_size)),
+        transforms.Grayscale(num_output_channels=3),  # Convert to RGB
+        transforms.ToTensor(),
+        normalize
+    ])
+
+    sample = transform_no_augment(Image.open(args.sample_dir)).unsqueeze(0).to(device)
 
     gen_pred_vis(tree, sample, args.sample_dir, args.results_dir, args, classes)
 
@@ -80,18 +91,18 @@ def explain_local(args):
 
 if __name__ == '__main__':
     args = get_local_expl_args()
-    try:
-        Image.open(args.sample_dir)
-        print("Image to explain: ", args.sample_dir)
-        explain_local(args)
-    except: #folder is not image
-        class_name = args.sample_dir.split('/')[-1]
-        if not os.path.exists(os.path.join(os.path.join(args.log_dir, args.results_dir),class_name)):
-            os.makedirs(os.path.join(os.path.join(args.log_dir, args.results_dir),class_name))
-        for filename in os.listdir(args.sample_dir):
-            print(filename)
-            if filename.endswith(".jpg") or filename.endswith(".png"): 
-                args_1 = deepcopy(args)
-                args_1.sample_dir = args.sample_dir+"/"+filename
-                args_1.results_dir = os.path.join(args.results_dir, class_name)
-                explain_local(args_1)
+    # try:
+    Image.open(args.sample_dir)
+    print("Image to explain: ", args.sample_dir)
+    explain_local(args)
+    # except: #folder is not image
+    #     class_name = args.sample_dir.split('/')[-1]
+    #     if not os.path.exists(os.path.join(os.path.join(args.log_dir, args.results_dir),class_name)):
+    #         os.makedirs(os.path.join(os.path.join(args.log_dir, args.results_dir),class_name))
+    #     for filename in os.listdir(args.sample_dir):
+    #         print(filename)
+    #         if filename.endswith(".jpg") or filename.endswith(".png"): 
+    #             args_1 = deepcopy(args)
+    #             args_1.sample_dir = args.sample_dir+"/"+filename
+    #             args_1.results_dir = os.path.join(args.results_dir, class_name)
+    #             explain_local(args_1)

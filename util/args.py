@@ -36,13 +36,13 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--depth",
         type=int,
-        default=5,
+        default=4,
         help="The tree is initialized as a complete tree of this depth",
     )
     parser.add_argument(
         "--epochs",
         type=int,
-        default=2,
+        default=100,
         help="The number of epochs the tree should be trained",
     )
     parser.add_argument(
@@ -144,7 +144,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--freeze_epochs",
         type=int,
-        default=2,
+        default=150,
         help="Number of epochs where pretrained features_net will be frozen",
     )
     parser.add_argument(
@@ -156,7 +156,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--upsample_threshold",
         type=float,
-        default=0.98,
+        default=0.99,
         help="Threshold (between 0 and 1) for visualizing the nearest patch of an image after upsampling. The higher this threshold, the larger the patches.",
     )
     parser.add_argument(

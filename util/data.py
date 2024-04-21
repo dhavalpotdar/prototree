@@ -169,18 +169,61 @@ def get_cars(
     return trainset, projectset, testset, classes, shape
 
 
+# def get_nih(
+#     augment: bool, train_dir: str, project_dir: str, test_dir: str, img_size=224
+# ):
+#     shape = (3, img_size, img_size)
+#     mean = (0.485, 0.456, 0.406)
+#     std = (0.229, 0.224, 0.225)
+
+#     normalize = transforms.Normalize(mean=mean, std=std)
+#     transform_no_augment = transforms.Compose(
+#         [transforms.Resize(size=(img_size, img_size)), transforms.ToTensor(), normalize]
+#     )
+
+#     if augment:
+#         transform = transforms.Compose(
+#             [
+#                 transforms.Resize(
+#                     size=(img_size + 32, img_size + 32)
+#                 ),  # resize to 256x256
+#                 transforms.RandomOrder(
+#                     [
+#                         transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
+#                         transforms.ColorJitter(
+#                             (0.6, 1.4), (0.6, 1.4), (0.6, 1.4), (-0.4, 0.4)
+#                         ),
+#                         transforms.RandomHorizontalFlip(),
+#                         transforms.RandomAffine(degrees=15, shear=(-2, 2)),
+#                     ]
+#                 ),
+#                 transforms.RandomCrop(size=(img_size, img_size)),  # crop to 224x224
+#                 transforms.ToTensor(),
+#                 normalize,
+#             ]
+#         )
+#     else:
+#         transform = transform_no_augment
+
+#     trainset = torchvision.datasets.ImageFolder(train_dir, transform=transform)
+#     projectset = torchvision.datasets.ImageFolder(
+#         project_dir, transform=transform_no_augment
+#     )
+#     testset = torchvision.datasets.ImageFolder(test_dir, transform=transform_no_augment)
+#     classes = trainset.classes
+
+#     return trainset, projectset, testset, classes, shape
+
 def get_nih(
     augment: bool, train_dir: str, project_dir: str, test_dir: str, img_size=224
 ):
     shape = (3, img_size, img_size)
     mean = (0.485, 0.456, 0.406)
     std = (0.229, 0.224, 0.225)
-
     normalize = transforms.Normalize(mean=mean, std=std)
     transform_no_augment = transforms.Compose(
         [transforms.Resize(size=(img_size, img_size)), transforms.ToTensor(), normalize]
     )
-
     if augment:
         transform = transforms.Compose(
             [
@@ -190,11 +233,11 @@ def get_nih(
                 transforms.RandomOrder(
                     [
                         transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
-                        transforms.ColorJitter(
-                            (0.6, 1.4), (0.6, 1.4), (0.6, 1.4), (-0.4, 0.4)
-                        ),
+                        transforms.ColorJitter(brightness=0.25, contrast=0.25),
                         transforms.RandomHorizontalFlip(),
-                        transforms.RandomAffine(degrees=15, shear=(-2, 2)),
+                        transforms.RandomAffine(
+                            15, translate=(0.1, 0.1), scale=(0.9, 1.1)
+                        ),
                     ]
                 ),
                 transforms.RandomCrop(size=(img_size, img_size)),  # crop to 224x224
@@ -204,12 +247,10 @@ def get_nih(
         )
     else:
         transform = transform_no_augment
-
     trainset = torchvision.datasets.ImageFolder(train_dir, transform=transform)
     projectset = torchvision.datasets.ImageFolder(
         project_dir, transform=transform_no_augment
     )
     testset = torchvision.datasets.ImageFolder(test_dir, transform=transform_no_augment)
     classes = trainset.classes
-
     return trainset, projectset, testset, classes, shape
